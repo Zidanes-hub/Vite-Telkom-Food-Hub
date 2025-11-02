@@ -1,0 +1,5 @@
+{
+  "name": "Telkom Food Hub",
+  "description": "A web application to explore and order food from various vendors around Telkom University. It provides a simple interface for students to find nearby culinary options and order directly via WhatsApp.",
+  "requestFramePermissions": []
+}

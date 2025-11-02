@@ -1,0 +1,14 @@
+.text-type {
+  display: inline-block;
+}
+
+.text-type__cursor {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.1em;
+  opacity: 1;
+}
+
+.text-type__cursor--hidden {
+  visibility: hidden;
+}
