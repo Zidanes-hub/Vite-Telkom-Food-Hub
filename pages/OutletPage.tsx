@@ -7,7 +7,7 @@ const SimpleHeader: React.FC = () => (
     <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="text-xl font-bold text-red-600 font-poppins">🍽️ Telkom Food Hub</Link>
+          <Link to="/" className="text-xl font-bold text-red-600 font-poppins">Telkom Food Hub</Link>
           <nav>
             <Link to="/" className="text-gray-600 hover:text-red-600 transition-colors font-semibold">← Kembali ke Pilihan</Link>
           </nav>
@@ -19,9 +19,11 @@ const SimpleHeader: React.FC = () => (
 const MenuCard: React.FC<{ item: MenuItem }> = ({ item }) => (
   <div className="bg-white rounded-xl shadow-lg overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300">
     <div className="relative">
-      <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-        <span className="text-gray-400 text-3xl">🍴</span>
-      </div>
+      <img 
+        src={item.image} 
+        alt={item.name} 
+        className="w-full h-48 object-cover" 
+      />
       {item.bestseller && (
         <div className="absolute top-3 right-3 bg-yellow-400 text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-md">⭐ Best Seller</div>
       )}
@@ -108,7 +110,7 @@ const OutletPage: React.FC = () => {
       </main>
       <footer className="bg-gray-800 text-white">
         <div className="container mx-auto px-4 py-6 text-center">
-          <p>❤️ &copy; 2025 Telkom Food Hub. Dibuat oleh Zidane & Rizki.</p>
+          <p> &copy; 2025 Telkom Food Hub. Dibuat oleh Zidane & Rizki.</p>
         </div>
       </footer>
     </div>

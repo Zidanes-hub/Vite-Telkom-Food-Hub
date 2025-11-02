@@ -15,9 +15,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
-  
-  const CLIENT_ID = '409387379447-jcckgsonj4pk3vlluplvsjjuuil73bp0.apps.googleusercontent.com';
-
+  const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const storedUsers = JSON.parse(localStorage.getItem('telkom-food-hub-users') || '[]');

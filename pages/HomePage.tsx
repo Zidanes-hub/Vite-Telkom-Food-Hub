@@ -18,9 +18,11 @@ const FeaturedCard: React.FC<{ outlet: typeof outlets[0], index: number }> = ({ 
       <div className="p-8">
         <div className="relative mb-6 h-48 flex items-center justify-center">
             <div className="absolute inset-0 bg-red-100 rounded-full transform scale-90"></div>
-            <div className="relative z-10 w-40 h-40 bg-gray-200 rounded-full shadow-md flex items-center justify-center">
-              <span className="text-gray-400 text-4xl font-poppins">🍽️</span>
-            </div>
+            <img
+              src={outlet.heroImage}
+              alt={outlet.name}
+              className="relative z-10 w-40 h-40 rounded-full shadow-md object-cover border-4 border-white"
+            />
         </div>
         <p className="text-sm font-semibold text-red-600 uppercase tracking-wider">{outlet.category}</p>
         <h2 className="text-3xl font-bold font-poppins text-gray-800 capitalize mt-1">{outlet.name}</h2>
@@ -213,9 +215,11 @@ const HomePage: React.FC = () => {
 
 const ProfileCard: React.FC<{ name: string, role: string }> = ({ name, role }) => (
   <div className="bg-gray-50 rounded-2xl shadow-md p-6 md:p-8 flex flex-col md:flex-row items-center gap-8">
-    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-200 border-4 border-white shadow-lg flex items-center justify-center">
-      <span className="text-5xl text-gray-400">🧑‍💻</span>
-    </div>
+    <img 
+    src={name === 'Zidane Surya Nugraha' ? '/images/zidanes.jpg' : '/images/rizki.jpg'} 
+    alt={name} 
+    className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white shadow-lg"
+    />
     <div className="text-center md:text-left">
         <h4 className="text-2xl font-bold text-gray-800">{name}</h4>
         <p className="text-md font-semibold text-red-600 mt-1">{role}</p>
