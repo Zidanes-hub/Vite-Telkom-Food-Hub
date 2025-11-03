@@ -1,13 +1,17 @@
+// backend/geminiService.js
 import { GoogleGenAI } from "@google/genai";
-import { outlets } from '../data/outlets';
+import { outlets } from './data.js'; // <-- Impor dari data.js lokal
 
-export const getFoodRecommendation = async (): Promise<string> => {
-  if (!process.env.API_KEY) {
-    console.warn("Gemini API key not found. Recommendation feature will be disabled.");
-    return "Fitur rekomendasi saat ini tidak tersedia. Silakan periksa konfigurasi API key.";
+export const getFoodRecommendation = async () => {
+  // process.env.GEMINI_API_KEY akan otomatis dibaca dari .env oleh server
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey) {
+    console.warn("Gemini API key not found. Set GEMINI_API_KEY in .env");
+    return "Fitur rekomendasi saat ini tidak tersedia.";
   }
   
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey });
   
   const outletNames = outlets.map(o => o.name).join(', ');
 

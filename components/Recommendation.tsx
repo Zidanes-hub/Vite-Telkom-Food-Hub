@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getFoodRecommendation } from '../services/geminiService';
+// HAPUS: import { getFoodRecommendation } from '../services/geminiService';
 
 const SparklesIcon: React.FC<{className: string}> = ({ className }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -17,10 +17,21 @@ const Recommendation: React.FC = () => {
     setError('');
     setRecommendation('');
     try {
-      const result = await getFoodRecommendation();
-      setRecommendation(result);
-    } catch (err) {
-      setError('Gagal mendapatkan rekomendasi.');
+      // --- PERUBAHAN DI SINI ---
+      // Kita panggil backend kita, bukan lagi service lokal
+      const response = await fetch('http://localhost:3001/api/recommend');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Gagal mendapatkan rekomendasi.');
+      }
+      
+      // Backend kita mengirim JSON: { recommendation: "..." }
+      setRecommendation(data.recommendation);
+      // --- AKHIR PERUBAHAN ---
+
+    } catch (err: any) {
+      setError(err.message || 'Gagal mendapatkan rekomendasi.');
     } finally {
       setIsLoading(false);
     }

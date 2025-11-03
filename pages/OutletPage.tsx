@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'; // <-- TAMBAH useState, useEffect
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { outlets } from '../data/outlets';
-import { MenuItem } from '../types';
+// HAPUS: import { outlets } from '../data/outlets';
+import { MenuItem, Outlet } from '../types'; // <-- TAMBAH Impor Tipe Outlet
 
 const SimpleHeader: React.FC = () => (
     <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
@@ -38,12 +38,65 @@ const MenuCard: React.FC<{ item: MenuItem }> = ({ item }) => (
 
 const OutletPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const outlet = outlets.find(o => o.slug === slug);
+  
+  // --- TAMBAHKAN STATE UNTUK DATA FETCHING ---
+  const [outlet, setOutlet] = useState<Outlet | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!outlet) {
-    return <Navigate to="/" replace />;
+  // --- HAPUS LOGIKA LAMA: const outlet = outlets.find(o => o.slug === slug); ---
+
+  // --- TAMBAHKAN LOGIKA FETCH DATA OUTLET TUNGGAL ---
+  useEffect(() => {
+    const fetchOutlet = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        // Panggil endpoint backend baru kita dengan slug
+        const response = await fetch(`http://localhost:3001/api/outlets/${slug}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            // Kita gunakan state error untuk menangani 404
+            setError('Outlet tidak ditemukan.');
+          } else {
+            throw new Error('Gagal memuat data outlet.');
+          }
+        } else {
+          const data = await response.json();
+          setOutlet(data);
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOutlet();
+  }, [slug]); // <-- Array dependensi [slug], fetch ulang jika slug berubah
+
+  // --- TAMBAHKAN KONDISI LOADING DAN ERROR ---
+  if (isLoading) {
+    return (
+      <div className="bg-gray-50 min-h-screen">
+        <SimpleHeader />
+        <div className="text-center py-20">
+          <p className="text-gray-600 font-semibold">Memuat menu...</p>
+        </div>
+      </div>
+    );
   }
 
+  if (error || !outlet) {
+    // Jika error atau outlet tidak ditemukan, kembali ke beranda
+    // Ini menggantikan logika `if (!outlet)` yang lama
+    return <Navigate to="/" replace />;
+  }
+  // --- AKHIR BLOK LOADING/ERROR ---
+
+  // Jika sudah lolos pengecekan di atas, berarti 'outlet' PASTI ada
+  // Jadi sisa kode di bawah ini aman
   const whatsappLink = `https://wa.me/${outlet.contact}?text=Halo%20${encodeURIComponent(outlet.name)},%20saya%20mau%20pesan%20dari%20Telkom%20Food%20Hub...`;
 
   return (

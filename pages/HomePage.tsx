@@ -3,18 +3,21 @@ import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useAuth } from '../hooks/useAuth';
 import { useScrollReveal } from '../hooks/useScrollReveal';
-import { outlets } from '../data/outlets';
+import { Outlet } from '../types';
 import Recommendation from '../components/Recommendation';
 import Silk from '../components/Silk';
 import TextType from '../components/TextType';
 import AnimatedContent from '../components/AnimatedContent';
 import RotatingText from '../components/RotatingText';
 import Carousel from '../components/Carousel';
+// HAPUS: import FeaturedMenuCarousel from '../components/FeaturedMenuCarousel';
+import FeaturedItemCard from '../components/FeaturedItemCard'; // <-- PASTIKAN INI ADA
 
-const FeaturedCard: React.FC<{ outlet: typeof outlets[0], index: number }> = ({ outlet, index }) => {
+// --- Komponen FeaturedCard (UMKM) ---
+const FeaturedCard: React.FC<{ outlet: Outlet, index: number }> = ({ outlet, index }) => {
   const ref = useScrollReveal<HTMLDivElement>();
   return (
-    <div ref={ref} className={`bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-700 ease-out opacity-0 translate-y-10 delay-${index * 100}`}>
+    <div ref={ref} className={`bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-700 ease-out opacity-0 translate-y-10 delay-${index * 100} h-full`}>
       <div className="p-8">
         <div className="relative mb-6 h-48 flex items-center justify-center">
             <div className="absolute inset-0 bg-red-100 rounded-full transform scale-90"></div>
@@ -42,11 +45,47 @@ const HomePage: React.FC = () => {
   const { user } = useAuth();
   const [dateString, setDateString] = useState('');
   
+  const [outlets, setOutlets] = useState<Outlet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  const featuredItems = React.useMemo(() => {
+    if (!outlets) return [];
+    
+    return outlets.flatMap(outlet => 
+      outlet.menu
+        .filter(item => item.bestseller) 
+        .map(item => ({
+          ...item,
+          outletName: outlet.name,
+          outletSlug: outlet.slug
+        }))
+    );
+  }, [outlets]); 
+
   useEffect(() => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     setDateString(today.toLocaleDateString('id-ID', options));
-  }, []);
+
+    const fetchOutlets = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('http://localhost:3001/api/outlets');
+        if (!response.ok) {
+          throw new Error('Failed to fetch'); // <-- Diperbarui untuk cocok dengan screenshot
+        }
+        const data = await response.json();
+        setOutlets(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOutlets();
+  }, []); 
 
   const howToOrderRef = useScrollReveal<HTMLElement>({ threshold: 0.2 });
   const mitraSliderRef = useScrollReveal<HTMLElement>({ threshold: 0.1 });
@@ -60,7 +99,6 @@ const HomePage: React.FC = () => {
         : 'Mau makan apa ';
   const rotatingWords = ["hari ini?", "besok?"];
 
-  // Icons for Carousel
   const FiSmartphone = () => <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>;
   const FiCheckSquare = () => <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>;
   const FiTruck = () => <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>;
@@ -73,6 +111,7 @@ const HomePage: React.FC = () => {
 
   return (
     <Layout>
+      {/* --- Bagian Hero --- */}
       <section id="hero-main" className="relative text-white text-center py-24 md:py-32 overflow-hidden h-[70vh] flex flex-col items-center justify-center">
         <div className="absolute inset-0 z-0">
             <Silk speed={3} scale={1.2} color="#991B1B" noiseIntensity={1.2} />
@@ -102,6 +141,7 @@ const HomePage: React.FC = () => {
         <style>{`.animation-delay-3000 { animation-delay: 3s; } @keyframes-fade-in-up { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-up { animation: fadeIn-up 1s ease-out forwards; }`}</style>
       </section>
 
+      {/* --- Bagian Greeting & Tanggal --- */}
       <section className="bg-gray-100 -mt-12 relative z-20 rounded-t-3xl pt-16 pb-16">
         <div className="container mx-auto px-4 space-y-12">
           <div className="text-center">
@@ -124,16 +164,51 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* --- Bagian Menu Unggulan & Daftar Outlet --- */}
       <section id="featured-section" className="featured-section py-16 md:py-24 bg-gray-100">
         <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {outlets.map((outlet, index) => (
-                    <FeaturedCard key={outlet.slug} outlet={outlet} index={index}/>
-                ))}
-            </div>
+            
+            {/* --- PENANGANAN KONDISI LOADING / ERROR (HANYA TAMPIL 1 KALI) --- */}
+            {isLoading && (
+              <p className="text-center text-gray-600 font-semibold">Memuat warung favorit...</p>
+            )}
+            {error && (
+              <p className="text-center text-red-600 font-semibold">{error}</p>
+            )}
+
+            {/* --- GRID MENU PALING LARIS (BARU) --- */}
+            {!isLoading && !error && featuredItems.length > 0 && (
+              <div className="mb-16">
+                {/* Judul baru yang terpusat */}
+                <h2 className="text-3xl md:text-4xl font-bold font-poppins text-gray-800 mb-12 text-center">
+                  Menu Paling Laris 🔥
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {featuredItems.map((item, index) => (
+                    <FeaturedItemCard key={item.name} item={item} />
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* --- GRID DAFTAR WARUNG (LAMA) --- */}
+            {!isLoading && !error && outlets.length > 0 && (
+              <div>
+                {/* Judul baru untuk membedakan */}
+                <h2 className="text-3xl md:text-4xl font-bold font-poppins text-gray-800 mb-12 text-center">
+                  Telusuri Semua Warung
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {outlets.map((outlet, index) => (
+                        <FeaturedCard key={outlet.slug} outlet={outlet} index={index}/>
+                    ))}
+                </div>
+              </div>
+            )}
         </div>
       </section>
       
+      {/* ... Sisa halaman ... */}
       <section ref={recommendationRef} className="py-16 md:py-24 bg-gray-50 opacity-0 translate-y-10 transition-all duration-700 ease-out">
         <div className="container mx-auto px-4 max-w-2xl">
             <Recommendation />
@@ -184,7 +259,7 @@ const HomePage: React.FC = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-center font-poppins text-gray-800">Dari Mahasiswa, Untuk Mahasiswa & UMKM</h2>
           <p className="text-lg text-center text-gray-600 mt-4 max-w-3xl mx-auto">Kami percaya pada kekuatan komunitas. Telkom Food Hub lahir dari semangat untuk menghubungkan mahasiswa dengan kekayaan kuliner lokal.</p>
           <div className="mt-12 space-y-12">
-            <ProfileCard name="Zidane Surya Nugraha" role="Full-Stack Developer & UI/UX Enthusiast" />
+            <ProfileCard name="Zidane Surya Nugraha" role="Full-Stack Developer & Software Architecture" />
             <ProfileCard name="Muhammad Rizki Ramdhani" role="Creative Technologist & Frontend Developer" />
           </div>
         </div>
