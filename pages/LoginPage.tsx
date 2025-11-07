@@ -13,24 +13,47 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // <-- TAMBAHIN INI
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login } = useAuth(); // <-- Kita panggil fungsi login dari useAuth
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-  const handleSubmit = (e: React.FormEvent) => {
+  
+  const handleSubmit = async (e: React.FormEvent) => { // <-- JADIIN ASYNC
     e.preventDefault();
-    const storedUsers = JSON.parse(localStorage.getItem('telkom-food-hub-users') || '[]');
-    const user = storedUsers.find((u: any) => u.email === email && u.password === password);
+    setError('');
+    setIsLoading(true); // <-- Mulai loading
 
-    if (user) {
-      setError('');
-      login({ name: user.name, email: user.email });
-      navigate('/');
-    } else {
-      setError('Email atau kata sandi salah.');
+    // --- GANTI LOGIC LOCALSTORAGE DENGAN FETCH ---
+    try {
+      const response = await fetch('http://localhost:3001/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Ambil error dari backend (misal: "Email atau kata sandi salah.")
+        throw new Error(data.error || 'Gagal login.');
+      }
+
+      // Kalo sukses, backend kirim data user
+      // Kita pakai fungsi login dari useAuth yg UDAH BENER
+      login(data.user); // data.user is { name: "...", email: "..." }
+      navigate('/'); // Login sukses, lempar ke Home
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false); // <-- Stop loading
     }
+    // --- AKHIR PERUBAHAN ---
   };
   
-  // JWT Decoder
+  // JWT Decoder (Biarkan saja, ini untuk Google Login)
   function decodeJwtResponse(token: string) {
     try {
       const base64Url = token.split('.')[1];
@@ -45,6 +68,7 @@ const LoginPage: React.FC = () => {
     }
   }
   
+  // Google Login Handler (Biarkan saja)
   const handleGoogleLogin = (response: any) => {
     const userObject = decodeJwtResponse(response.credential);
     if (userObject) {
@@ -55,8 +79,8 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  // Google Script Loader (Biarkan saja)
   useEffect(() => {
-    // Check if the Google script has loaded
     if (window.google && window.google.accounts) {
       window.google.accounts.id.initialize({
         client_id: CLIENT_ID,
@@ -68,7 +92,7 @@ const LoginPage: React.FC = () => {
         { theme: "outline", size: "large", width: "100%" }
       );
     }
-  }, []);
+  }, [CLIENT_ID]); // <-- Fix: tambahin CLIENT_ID di dependency array
 
 
   return (
@@ -89,6 +113,7 @@ const LoginPage: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLoading} // <-- Tambah disabled
             />
           </div>
           <div className="mb-4">
@@ -101,6 +126,7 @@ const LoginPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading} // <-- Tambah disabled
             />
           </div>
           <div className="text-right mb-6">
@@ -108,8 +134,12 @@ const LoginPage: React.FC = () => {
               Lupa kata sandi?
             </Link>
           </div>
-          <button type="submit" className="btn btn-danger w-full bg-red-600 text-white rounded-full py-2.5 font-semibold hover:bg-red-700 transition-colors">
-            Masuk
+          <button 
+            type="submit" 
+            className="btn btn-danger w-full bg-red-600 text-white rounded-full py-2.5 font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
+            disabled={isLoading} // <-- Tambah disabled
+          >
+            {isLoading ? 'Loading...' : 'Masuk'} {/* <-- Ubah teks pas loading */}
           </button>
         </form>
         

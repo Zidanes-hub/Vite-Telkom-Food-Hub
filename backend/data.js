@@ -63,3 +63,5 @@ export const outlets = [{
         mapEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.3013824331087!2d107.62886467500171!3d-6.973715693026815!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e906646541b5%3A0x2f8ad3238f828a3c!2sWarung%20Nasi%20Bu%20Yuyun!5e0!3m2!1sen!2sid!4v1678886543210!5m2!1sen!2sid',
     },
 ];
+
+export let users = [];

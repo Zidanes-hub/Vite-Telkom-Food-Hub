@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -8,29 +7,47 @@ const RegisterPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // <-- TAMBAHIN INI
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => { // <-- JADIIN ASYNC
     e.preventDefault();
+    setError(''); // Reset error setiap kali submit
+
     if (password !== confirmPassword) {
       setError('Konfirmasi kata sandi tidak cocok.');
       return;
     }
 
-    const storedUsers = JSON.parse(localStorage.getItem('telkom-food-hub-users') || '[]');
-    const userExists = storedUsers.some((user: any) => user.email === email);
+    setIsLoading(true); // <-- Mulai loading
 
-    if (userExists) {
-      setError('Email sudah terdaftar.');
-      return;
+    // --- GANTI LOGIC LOCALSTORAGE DENGAN FETCH ---
+    try {
+      const response = await fetch('http://localhost:3001/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Ambil error dari backend (misal: "Email sudah terdaftar.")
+        throw new Error(data.error || 'Gagal melakukan registrasi.');
+      }
+
+      // Kalo sukses, backend kirim status 201
+      console.log(data.message); // "Registrasi berhasil!"
+      navigate('/login'); // Arahin ke halaman login
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false); // <-- Stop loading
     }
-
-    const newUser = { name, email, password };
-    storedUsers.push(newUser);
-    localStorage.setItem('telkom-food-hub-users', JSON.stringify(storedUsers));
-    
-    setError('');
-    navigate('/login');
+    // --- AKHIR PERUBAHAN ---
   };
 
   return (
@@ -51,6 +68,7 @@ const RegisterPage: React.FC = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              disabled={isLoading} // <-- Tambah disabled
             />
           </div>
           <div className="mb-4">
@@ -63,6 +81,7 @@ const RegisterPage: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLoading} // <-- Tambah disabled
             />
           </div>
           <div className="mb-4">
@@ -76,6 +95,7 @@ const RegisterPage: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
+              disabled={isLoading} // <-- Tambah disabled
             />
           </div>
           <div className="mb-6">
@@ -88,10 +108,15 @@ const RegisterPage: React.FC = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              disabled={isLoading} // <-- Tambah disabled
             />
           </div>
-          <button type="submit" className="btn btn-danger w-full bg-red-600 text-white rounded-full py-2.5 font-semibold hover:bg-red-700 transition-colors">
-            Daftar
+          <button
+            type="submit"
+            className="btn btn-danger w-full bg-red-600 text-white rounded-full py-2.5 font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
+            disabled={isLoading} // <-- Tambah disabled
+          >
+            {isLoading ? 'Mendaftarkan...' : 'Daftar'} {/* <-- Ubah teks pas loading */}
           </button>
         </form>
         <p className="text-center text-sm mt-6 text-gray-600">

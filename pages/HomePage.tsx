@@ -126,7 +126,15 @@ const HomePage: React.FC = () => {
                 pauseDuration={2000}
                 className="text-4xl md:text-6xl font-extrabold font-poppins"
             />
-            <p className="text-lg md:text-xl mt-4 max-w-2xl mx-auto animate-fade-in-up animation-delay-3000">Jelajahi warung favorit di sekitar kampus. Pesan mudah, langsung via WhatsApp.</p>
+            {/* --- INI YANG DIUBAH --- */}
+            <p 
+              className="text-lg md:text-xl mt-4 max-w-2xl mx-auto animate-fade-in-up" 
+              style={{ animationDelay: '5s' }}
+            >
+              Jelajahi warung favorit di sekitar kampus. Pesan mudah, langsung via WhatsApp.
+            </p>
+            {/* --- AKHIR PERUBAHAN --- */}
+
             <div className="mt-8">
                 <AnimatedContent delay={3.5} duration={1} ease="elastic.out(1, 0.5)" distance={50} direction="vertical" initialOpacity={0}>
                      <button
@@ -138,7 +146,9 @@ const HomePage: React.FC = () => {
                 </AnimatedContent>
             </div>
         </div>
-        <style>{`.animation-delay-3000 { animation-delay: 3s; } @keyframes-fade-in-up { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-up { animation: fadeIn-up 1s ease-out forwards; }`}</style>
+        
+        {/* --- STYLE BLOCK DIHAPUS --- */}
+        <style>{`@keyframes-fade-in-up { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-up { animation: fadeIn-up 1s ease-out forwards; }`}</style>
       </section>
 
       {/* --- Bagian Greeting & Tanggal --- */}
