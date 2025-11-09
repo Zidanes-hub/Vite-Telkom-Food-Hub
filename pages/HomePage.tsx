@@ -1,3 +1,4 @@
+// src/pages/HomePage.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -10,8 +11,8 @@ import TextType from '../components/TextType';
 import AnimatedContent from '../components/AnimatedContent';
 import RotatingText from '../components/RotatingText';
 import Carousel from '../components/Carousel';
-// HAPUS: import FeaturedMenuCarousel from '../components/FeaturedMenuCarousel';
-import FeaturedItemCard from '../components/FeaturedItemCard'; // <-- PASTIKAN INI ADA
+import FeaturedItemCard from '../components/FeaturedItemCard'; 
+import InfoWidget from '../components/InfoWidget'; // Adjust path if needed
 
 // --- Komponen FeaturedCard (UMKM) ---
 const FeaturedCard: React.FC<{ outlet: Outlet, index: number }> = ({ outlet, index }) => {
@@ -43,7 +44,8 @@ const FeaturedCard: React.FC<{ outlet: Outlet, index: number }> = ({ outlet, ind
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
-  const [dateString, setDateString] = useState('');
+  // HAPUS setDateString & dateString useState karena sudah di handle di InfoWidget
+  // const [dateString, setDateString] = useState(''); 
   
   const [outlets, setOutlets] = useState<Outlet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,16 +66,17 @@ const HomePage: React.FC = () => {
   }, [outlets]); 
 
   useEffect(() => {
-    const today = new Date();
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    setDateString(today.toLocaleDateString('id-ID', options));
+    // HAPUS logic setDateString karena sudah di handle di InfoWidget
+    // const today = new Date();
+    // const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    // setDateString(today.toLocaleDateString('id-ID', options));
 
     const fetchOutlets = async () => {
       try {
         setIsLoading(true);
         const response = await fetch('http://localhost:3001/api/outlets');
         if (!response.ok) {
-          throw new Error('Failed to fetch'); // <-- Diperbarui untuk cocok dengan screenshot
+          throw new Error('Failed to fetch');
         }
         const data = await response.json();
         setOutlets(data);
@@ -126,18 +129,17 @@ const HomePage: React.FC = () => {
                 pauseDuration={2000}
                 className="text-4xl md:text-6xl font-extrabold font-poppins"
             />
-            {/* --- INI YANG DIUBAH --- */}
+            {/* START FIX: Perbaikan classname dan penyesuaian delay */}
             <p 
               className="text-lg md:text-xl mt-4 max-w-2xl mx-auto animate-fade-in-up" 
-              style={{ animationDelay: '5s' }}
+              style={{ animationDelay: '3.5s' }}
             >
               Jelajahi warung favorit di sekitar kampus. Pesan mudah, langsung via WhatsApp.
             </p>
-            {/* --- AKHIR PERUBAHAN --- */}
-
+            {/* END FIX */}
             <div className="mt-8">
                 <AnimatedContent delay={3.5} duration={1} ease="elastic.out(1, 0.5)" distance={50} direction="vertical" initialOpacity={0}>
-                     <button
+                    <button
                         onClick={() => document.getElementById('featured-section')?.scrollIntoView({ behavior: 'smooth' })}
                         className="bg-white text-red-600 font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
                     >
@@ -146,9 +148,10 @@ const HomePage: React.FC = () => {
                 </AnimatedContent>
             </div>
         </div>
-        
-        {/* --- STYLE BLOCK DIHAPUS --- */}
-        <style>{`@keyframes-fade-in-up { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-up { animation: fadeIn-up 1s ease-out forwards; }`}</style>
+        {/* START FIX: Hapus style block inline */}
+        {/* Hapus block ini jika sudah didefinisikan di tailwind.config.js */}
+        {/* <style>{`@keyframes-fade-in-up { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-up { animation: fadeIn-up 1s ease-out forwards; }`}</style> */}
+        {/* END FIX */}
       </section>
 
       {/* --- Bagian Greeting & Tanggal --- */}
@@ -168,9 +171,10 @@ const HomePage: React.FC = () => {
                 <span className="text-gray-800"> Solusinya!!</span>
             </p>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center gap-4 max-w-sm mx-auto">
+          {/* <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center gap-4 max-w-sm mx-auto">
               <p id="tanggal-hari-ini" className="font-semibold text-gray-700 text-lg">{dateString}</p>
-          </div>
+          </div> */}
+          <InfoWidget /> {/* <-- INI PENGGANTINYA */}
         </div>
       </section>
 
@@ -189,7 +193,6 @@ const HomePage: React.FC = () => {
             {/* --- GRID MENU PALING LARIS (BARU) --- */}
             {!isLoading && !error && featuredItems.length > 0 && (
               <div className="mb-16">
-                {/* Judul baru yang terpusat */}
                 <h2 className="text-3xl md:text-4xl font-bold font-poppins text-gray-800 mb-12 text-center">
                   Menu Paling Laris 🔥
                 </h2>
@@ -204,14 +207,15 @@ const HomePage: React.FC = () => {
             {/* --- GRID DAFTAR WARUNG (LAMA) --- */}
             {!isLoading && !error && outlets.length > 0 && (
               <div>
-                {/* Judul baru untuk membedakan */}
                 <h2 className="text-3xl md:text-4xl font-bold font-poppins text-gray-800 mb-12 text-center">
                   Telusuri Semua Warung
                 </h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {/* START FIX: Ganti <featuredCard> menjadi <FeaturedCard> */}
                     {outlets.map((outlet, index) => (
-                        <FeaturedCard key={outlet.slug} outlet={outlet} index={index}/>
+                      <FeaturedCard key={outlet.slug} outlet={outlet} index={index}/>
                     ))}
+                    {/* END FIX */}
                 </div>
               </div>
             )}
@@ -238,11 +242,14 @@ const HomePage: React.FC = () => {
           <div className="container mx-auto px-4 text-center">
               <h2 className="text-3xl md:text-4xl font-bold font-poppins">Kisah di Balik Setiap Rasa</h2>
               <div className="mt-12 overflow-hidden relative h-64">
-                <div className="absolute top-0 left-0 w-full h-full flex animate-scroll">
+                <div 
+                className="absolute top-0 left-0 w-full h-full flex animate-custom-scroll hover:[animation-play-state:paused]"
+                style={{ width: `calc(208px * 14)` }}
+                >
                   {[...Array(2)].map((_, i) => (
                     <React.Fragment key={i}>
                       {[...Array(7)].map((_, j) => (
-                        <div key={j} className="w-48 h-full bg-gray-700 mx-2 rounded-lg flex items-center justify-center text-gray-500">
+                        <div key={j} className="w-48 h-full bg-gray-700 mx-2 rounded-lg flex items-center justify-center text-gray-500 flex-shrink-0">
                           Mitra
                         </div>
                       ))}
@@ -252,14 +259,17 @@ const HomePage: React.FC = () => {
               </div>
               <p className="mt-8 text-xl italic text-gray-300">"Kepercayaan Anda adalah semangat kami untuk terus menyajikan yang terbaik."</p>
           </div>
+          {/* 
+            Karena kita menggunakan CDN Tailwind, kita perlu mendefinisikan animasi kustom di sini.
+            CDN tidak membaca file tailwind.config.js.
+          */}
           <style>{`
             @keyframes scroll {
-              from { transform: translateX(0); }
-              to { transform: translateX(-50%); }
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
             }
-            .animate-scroll {
+            .animate-custom-scroll {
               animation: scroll 40s linear infinite;
-              width: calc(208px * 14); /* (192px width + 16px margin) * 14 items */
             }
           `}</style>
       </section>
