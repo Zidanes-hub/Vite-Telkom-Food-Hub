@@ -19,6 +19,27 @@
             font-family: 'Poppins', sans-serif;
         }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'custom-scroll': 'scroll 40s linear infinite',
+                    },
+                    keyframes: {
+                        scroll: {
+                            '0%': {
+                                transform: 'translateX(0)'
+                            },
+                            '100%': {
+                                transform: 'translateX(-50%)'
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <script type="importmap">
         { "imports": { "react/": "https://aistudiocdn.com/react@^19.2.0/", "react": "https://aistudiocdn.com/react@^19.2.0", "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/", "@google/genai": "https://aistudiocdn.com/@google/genai@^1.27.0", "react-router-dom":
         "https://aistudiocdn.com/react-router-dom@^7.9.4", "three": "https://aistudiocdn.com/three@^0.180.0", "gsap/": "https://aistudiocdn.com/gsap@^3.13.0/", "gsap": "https://aistudiocdn.com/gsap@^3.13.0", "@react-three/fiber": "https://aistudiocdn.com/@react-three/fiber@^9.4.0",
