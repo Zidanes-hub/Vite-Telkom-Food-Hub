@@ -12,7 +12,7 @@ import AnimatedContent from '../components/AnimatedContent';
 import RotatingText from '../components/RotatingText';
 import Carousel from '../components/Carousel';
 import FeaturedItemCard from '../components/FeaturedItemCard';
-import InfoWidget from '../components/InfoWidget'; // Adjust path if needed
+import InfoWidget from '../components/InfoWidget'; // InfoWidget sekarang udah bawa WeatherWidget di dalemnya
 
 // --- Komponen FeaturedCard (UMKM) ---
 const FeaturedCard: React.FC<{ outlet: Outlet; index: number }> = ({ outlet, index }) => {
@@ -51,9 +51,7 @@ const FeaturedCard: React.FC<{ outlet: Outlet; index: number }> = ({ outlet, ind
 
 const HomePage: React.FC = () => {
   const { user } = useAuth();
-  // HAPUS setDateString & dateString useState karena sudah di handle di InfoWidget
-  // const [dateString, setDateString] = useState('');
-
+  
   const [outlets, setOutlets] = useState<Outlet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,11 +71,6 @@ const HomePage: React.FC = () => {
   }, [outlets]);
 
   useEffect(() => {
-    // HAPUS logic setDateString karena sudah di handle di InfoWidget
-    // const today = new Date();
-    // const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    // setDateString(today.toLocaleDateString('id-ID', options));
-
     const fetchOutlets = async () => {
       try {
         setIsLoading(true);
@@ -183,8 +176,6 @@ const HomePage: React.FC = () => {
     },
   ];
 
-  // --- TAMBAH: Definisikan path gambar mitra Anda di sini ---
-  // Anda bisa menambah atau mengurangi gambar di sini, slider akan otomatis menyesuaikan.
   const mitraImages = [
     '/images/buyunblk.jpg',
     '/images/outletario.jpg',
@@ -212,14 +203,14 @@ const HomePage: React.FC = () => {
             pauseDuration={2000}
             className='text-4xl md:text-6xl font-extrabold font-poppins'
           />
-          {/* START FIX: Perbaikan classname dan penyesuaian delay */}
+          
           <p
             className='text-lg md:text-xl mt-4 max-w-2xl mx-auto animate-fade-in-up'
             style={{ animationDelay: '3.5s' }}
           >
             Jelajahi warung favorit di sekitar kampus. Pesan mudah, langsung via WhatsApp.
           </p>
-          {/* END FIX */}
+          
           <div className='mt-8'>
             <AnimatedContent
               delay={3.5}
@@ -242,13 +233,9 @@ const HomePage: React.FC = () => {
             </AnimatedContent>
           </div>
         </div>
-        {/* START FIX: Hapus style block inline */}
-        {/* Hapus block ini jika sudah didefinisikan di tailwind.config.js */}
-        {/* <style>{`@keyframes-fade-in-up { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } } .animate-fade-in-up { animation: fadeIn-up 1s ease-out forwards; }`}</style> */}
-        {/* END FIX */}
       </section>
 
-      {/* --- Bagian Greeting & Tanggal --- */}
+      {/* --- Bagian Greeting & Tanggal & Cuaca --- */}
       <section className='bg-gray-100 -mt-12 relative z-20 rounded-t-3xl pt-16 pb-16'>
         <div className='container mx-auto px-4 space-y-12'>
           <div className='text-center'>
@@ -265,17 +252,20 @@ const HomePage: React.FC = () => {
               <span className='text-gray-800'> Solusinya!!</span>
             </p>
           </div>
-          {/* <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center gap-4 max-w-sm mx-auto">
-              <p id="tanggal-hari-ini" className="font-semibold text-gray-700 text-lg">{dateString}</p>
-          </div> */}
-          <InfoWidget /> {/* <-- INI PENGGANTINYA */}
+          
+          {/* --- WIDGET TANGGAL & CUACA --- */}
+          <div className='flex justify-center w-full group'>
+            <div className='flex flex-row items-center justify-center gap-4 p-4 bg-white shadow-lg'>
+              <InfoWidget />
+            </div>
+          </div>
         </div>
       </section>
 
       {/* --- Bagian Menu Unggulan & Daftar Outlet --- */}
       <section id='featured-section' className='featured-section py-16 md:py-24 bg-gray-100'>
         <div className='container mx-auto px-4'>
-          {/* --- PENANGANAN KONDISI LOADING / ERROR (HANYA TAMPIL 1 KALI) --- */}
+          {/* --- PENANGANAN KONDISI LOADING / ERROR --- */}
           {isLoading && (
             <p className='text-center text-gray-600 font-semibold'>Memuat warung favorit...</p>
           )}
@@ -302,11 +292,9 @@ const HomePage: React.FC = () => {
                 Telusuri Semua Warung
               </h2>
               <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
-                {/* START FIX: Ganti <featuredCard> menjadi <FeaturedCard> */}
                 {outlets.map((outlet, index) => (
                   <FeaturedCard key={outlet.slug} outlet={outlet} index={index} />
                 ))}
-                {/* END FIX */}
               </div>
             </div>
           )}
@@ -383,7 +371,6 @@ const HomePage: React.FC = () => {
         className='py-16 md:py-24 bg-white opacity-0 translate-y-10 transition-all duration-700 ease-out'
       >
         <div className='container mx-auto px-4'>
-          {/* Saya juga melihat ada gambar duplikat di array, saya hapus salah satunya sebagai contoh */}
           <h2 className='text-3xl md:text-4xl font-bold text-center font-poppins text-gray-800'>
             Dari Mahasiswa, Untuk Mahasiswa & UMKM
           </h2>
