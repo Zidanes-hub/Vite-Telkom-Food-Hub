@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, RefObject } from 'react';
 
 type Options = {
@@ -6,7 +5,7 @@ type Options = {
   rootMargin?: string;
 };
 
-export const useScrollReveal = <T extends HTMLElement,>(options?: Options): RefObject<T> => {
+export const useScrollReveal = <T extends HTMLElement>(options?: Options): RefObject<T> => {
   const ref = useRef<T>(null);
 
   useEffect(() => {
@@ -24,7 +23,7 @@ export const useScrollReveal = <T extends HTMLElement,>(options?: Options): RefO
       {
         threshold: options?.threshold || 0.1,
         rootMargin: options?.rootMargin || '0px',
-      }
+      },
     );
 
     observer.observe(currentRef);

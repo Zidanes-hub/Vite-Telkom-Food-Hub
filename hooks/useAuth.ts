@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 
 interface User {
@@ -16,7 +15,7 @@ export const useAuth = () => {
         setUser(JSON.parse(storedUser));
       }
     } catch (error) {
-      console.error("Failed to parse user from localStorage", error);
+      console.error('Failed to parse user from localStorage', error);
       localStorage.removeItem('telkom-food-hub-user');
     }
   }, []);

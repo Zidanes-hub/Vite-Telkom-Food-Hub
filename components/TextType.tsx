@@ -3,25 +3,25 @@ import { gsap } from 'gsap';
 import './TextType.css';
 
 interface TextTypeProps {
-    text: string | string[];
-    as?: React.ElementType;
-    typingSpeed?: number;
-    initialDelay?: number;
-    pauseDuration?: number;
-    deletingSpeed?: number;
-    loop?: boolean;
-    className?: string;
-    showCursor?: boolean;
-    hideCursorWhileTyping?: boolean;
-    cursorCharacter?: string;
-    cursorClassName?: string;
-    cursorBlinkDuration?: number;
-    textColors?: string[];
-    variableSpeed?: { min: number, max: number };
-    onSentenceComplete?: (sentence: string, index: number) => void;
-    startOnVisible?: boolean;
-    reverseMode?: boolean;
-    [x: string]: any;
+  text: string | string[];
+  as?: React.ElementType;
+  typingSpeed?: number;
+  initialDelay?: number;
+  pauseDuration?: number;
+  deletingSpeed?: number;
+  loop?: boolean;
+  className?: string;
+  showCursor?: boolean;
+  hideCursorWhileTyping?: boolean;
+  cursorCharacter?: string;
+  cursorClassName?: string;
+  cursorBlinkDuration?: number;
+  textColors?: string[];
+  variableSpeed?: { min: number; max: number };
+  onSentenceComplete?: (sentence: string, index: number) => void;
+  startOnVisible?: boolean;
+  reverseMode?: boolean;
+  [x: string]: any;
 }
 
 const TextType: React.FC<TextTypeProps> = ({
@@ -70,15 +70,15 @@ const TextType: React.FC<TextTypeProps> = ({
     if (!startOnVisible || !containerRef.current) return;
 
     const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsVisible(true);
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     observer.observe(containerRef.current);
@@ -93,7 +93,7 @@ const TextType: React.FC<TextTypeProps> = ({
         duration: cursorBlinkDuration,
         repeat: -1,
         yoyo: true,
-        ease: 'power2.inOut'
+        ease: 'power2.inOut',
       });
     }
   }, [showCursor, cursorBlinkDuration]);
@@ -118,21 +118,21 @@ const TextType: React.FC<TextTypeProps> = ({
             onSentenceComplete(textArray[currentTextIndex], currentTextIndex);
           }
 
-          setCurrentTextIndex(prev => (prev + 1) % textArray.length);
+          setCurrentTextIndex((prev) => (prev + 1) % textArray.length);
           setCurrentCharIndex(0);
         } else {
           timeout = setTimeout(() => {
-            setDisplayedText(prev => prev.slice(0, -1));
+            setDisplayedText((prev) => prev.slice(0, -1));
           }, deletingSpeed);
         }
       } else {
         if (currentCharIndex < processedText.length) {
           timeout = setTimeout(
             () => {
-              setDisplayedText(prev => prev + processedText[currentCharIndex]);
-              setCurrentCharIndex(prev => prev + 1);
+              setDisplayedText((prev) => prev + processedText[currentCharIndex]);
+              setCurrentCharIndex((prev) => prev + 1);
             },
-            variableSpeed ? getRandomSpeed() : typingSpeed
+            variableSpeed ? getRandomSpeed() : typingSpeed,
           );
         } else if (textArray.length > 1 || loop) {
           timeout = setTimeout(() => {
@@ -164,33 +164,34 @@ const TextType: React.FC<TextTypeProps> = ({
     reverseMode,
     variableSpeed,
     onSentenceComplete,
-    getRandomSpeed
+    getRandomSpeed,
   ]);
 
   const shouldHideCursor =
-    hideCursorWhileTyping && (isDeleting || currentCharIndex < (textArray[currentTextIndex] || '').length);
+    hideCursorWhileTyping &&
+    (isDeleting || currentCharIndex < (textArray[currentTextIndex] || '').length);
 
   return createElement(
     Component,
     {
       ref: containerRef,
       className: `text-type ${className}`,
-      ...props
+      ...props,
     },
     <>
-      <span className="text-type__content" style={{ color: getCurrentTextColor() || 'inherit' }}>
+      <span className='text-type__content' style={{ color: getCurrentTextColor() || 'inherit' }}>
         {displayedText}
       </span>
       {showCursor && (
         <span
           ref={cursorRef}
           className={`text-type__cursor ${cursorClassName} ${shouldHideCursor ? 'text-type__cursor--hidden' : ''}`}
-          aria-hidden="true"
+          aria-hidden='true'
         >
           {cursorCharacter}
         </span>
       )}
-    </>
+    </>,
   );
 };
 

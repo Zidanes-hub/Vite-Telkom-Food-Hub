@@ -8,7 +8,7 @@ const hexToNormalizedRGB = (hex: string) => {
   return [
     parseInt(hex.slice(0, 2), 16) / 255,
     parseInt(hex.slice(2, 4), 16) / 255,
-    parseInt(hex.slice(4, 6), 16) / 255
+    parseInt(hex.slice(4, 6), 16) / 255,
   ];
 };
 
@@ -85,21 +85,31 @@ const SilkPlane = forwardRef(function SilkPlane({ uniforms }: any, ref: any) {
   return (
     <mesh ref={ref}>
       <planeGeometry args={[1, 1, 1, 1]} />
-      <shaderMaterial uniforms={uniforms} vertexShader={vertexShader} fragmentShader={fragmentShader} />
+      <shaderMaterial
+        uniforms={uniforms}
+        vertexShader={vertexShader}
+        fragmentShader={fragmentShader}
+      />
     </mesh>
   );
 });
 SilkPlane.displayName = 'SilkPlane';
 
 interface SilkProps {
-    speed?: number;
-    scale?: number;
-    color?: string;
-    noiseIntensity?: number;
-    rotation?: number;
+  speed?: number;
+  scale?: number;
+  color?: string;
+  noiseIntensity?: number;
+  rotation?: number;
 }
 
-const Silk: React.FC<SilkProps> = ({ speed = 5, scale = 1, color = '#7B7481', noiseIntensity = 1.5, rotation = 0 }) => {
+const Silk: React.FC<SilkProps> = ({
+  speed = 5,
+  scale = 1,
+  color = '#7B7481',
+  noiseIntensity = 1.5,
+  rotation = 0,
+}) => {
   const meshRef = useRef();
 
   const uniforms = useMemo(
@@ -109,13 +119,13 @@ const Silk: React.FC<SilkProps> = ({ speed = 5, scale = 1, color = '#7B7481', no
       uNoiseIntensity: { value: noiseIntensity },
       uColor: { value: new Color(...hexToNormalizedRGB(color)) },
       uRotation: { value: rotation },
-      uTime: { value: 0 }
+      uTime: { value: 0 },
     }),
-    [speed, scale, noiseIntensity, color, rotation]
+    [speed, scale, noiseIntensity, color, rotation],
   );
 
   return (
-    <Canvas dpr={[1, 2]} frameloop="always">
+    <Canvas dpr={[1, 2]} frameloop='always'>
       <SilkPlane ref={meshRef} uniforms={uniforms} />
     </Canvas>
   );
