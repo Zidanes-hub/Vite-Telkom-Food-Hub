@@ -13,6 +13,7 @@ import RotatingText from '../components/RotatingText';
 import Carousel from '../components/Carousel';
 import FeaturedItemCard from '../components/FeaturedItemCard';
 import InfoWidget from '../components/InfoWidget'; // Adjust path if needed
+import WeatherWidget from '../components/WeatherWidget';
 
 // --- Komponen FeaturedCard (UMKM) ---
 const FeaturedCard: React.FC<{ outlet: Outlet; index: number }> = ({ outlet, index }) => {
@@ -268,7 +269,10 @@ const HomePage: React.FC = () => {
           {/* <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center gap-4 max-w-sm mx-auto">
               <p id="tanggal-hari-ini" className="font-semibold text-gray-700 text-lg">{dateString}</p>
           </div> */}
-          <InfoWidget /> {/* <-- INI PENGGANTINYA */}
+          <div className='flex flex-col md:flex-row gap-6 justify-center items-center'>
+            <InfoWidget />
+            <WeatherWidget />
+          </div>
         </div>
       </section>
 
