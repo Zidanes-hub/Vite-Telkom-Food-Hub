@@ -7,19 +7,19 @@ import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(ScrollTrigger, GSAPSplitText, useGSAP);
 
 interface SplitTextProps {
-    text: string;
-    className?: string;
-    delay?: number;
-    duration?: number;
-    ease?: string;
-    splitType?: string;
-    from?: gsap.TweenVars;
-    to?: gsap.TweenVars;
-    threshold?: number;
-    rootMargin?: string;
-    textAlign?: 'left' | 'center' | 'right';
-    tag?: 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-    onLetterAnimationComplete?: () => void;
+  text: string;
+  className?: string;
+  delay?: number;
+  duration?: number;
+  ease?: string;
+  splitType?: string;
+  from?: gsap.TweenVars;
+  to?: gsap.TweenVars;
+  threshold?: number;
+  rootMargin?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  tag?: 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  onLetterAnimationComplete?: () => void;
 }
 
 const SplitText: React.FC<SplitTextProps> = ({
@@ -35,7 +35,7 @@ const SplitText: React.FC<SplitTextProps> = ({
   rootMargin = '-100px',
   textAlign = 'center',
   tag = 'p',
-  onLetterAnimationComplete
+  onLetterAnimationComplete,
 }) => {
   const ref = useRef<HTMLElement | null>(null);
   const animationCompletedRef = useRef(false);
@@ -106,15 +106,15 @@ const SplitText: React.FC<SplitTextProps> = ({
                 animationCompletedRef.current = true;
                 onLetterAnimationComplete?.();
               },
-            }
+            },
           );
-        }
+        },
       });
 
       el._rbsplitInstance = splitInstance;
 
       return () => {
-        ScrollTrigger.getAll().forEach(st => {
+        ScrollTrigger.getAll().forEach((st) => {
           if (st.trigger === el) st.kill();
         });
         try {
@@ -137,22 +137,22 @@ const SplitText: React.FC<SplitTextProps> = ({
         threshold,
         rootMargin,
         fontsLoaded,
-        onLetterAnimationComplete
+        onLetterAnimationComplete,
       ],
-      scope: ref
-    }
+      scope: ref,
+    },
   );
-  
+
   const Tag = tag;
   const style = {
-      textAlign,
-      overflow: 'hidden',
-      display: 'inline-block',
+    textAlign,
+    overflow: 'hidden',
+    display: 'inline-block',
   };
 
   return (
     <Tag ref={ref as any} style={style} className={className}>
-        {text}
+      {text}
     </Tag>
   );
 };

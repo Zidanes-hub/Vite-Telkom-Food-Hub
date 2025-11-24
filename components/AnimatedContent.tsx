@@ -31,7 +31,7 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
   scale = 1,
   threshold = 0.1,
   delay = 0,
-  onComplete
+  onComplete,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -41,12 +41,13 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
 
     const axis = direction === 'horizontal' ? 'x' : 'y';
     const offset = reverse ? -distance : distance;
-    
-    const anim = gsap.fromTo(el,
-      { 
-        [axis]: offset, 
-        scale, 
-        opacity: animateOpacity ? initialOpacity : 1 
+
+    const anim = gsap.fromTo(
+      el,
+      {
+        [axis]: offset,
+        scale,
+        opacity: animateOpacity ? initialOpacity : 1,
       },
       {
         [axis]: 0,
@@ -62,7 +63,7 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
           toggleActions: 'play none none none',
           once: true,
         },
-      }
+      },
     );
 
     return () => {
@@ -70,11 +71,24 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
       anim.kill();
     };
   }, [
-    distance, direction, reverse, duration, ease, 
-    initialOpacity, animateOpacity, scale, threshold, delay, onComplete
+    distance,
+    direction,
+    reverse,
+    duration,
+    ease,
+    initialOpacity,
+    animateOpacity,
+    scale,
+    threshold,
+    delay,
+    onComplete,
   ]);
 
-  return <div ref={ref} style={{ opacity: initialOpacity }}>{children}</div>;
+  return (
+    <div ref={ref} style={{ opacity: initialOpacity }}>
+      {children}
+    </div>
+  );
 };
 
 export default AnimatedContent;

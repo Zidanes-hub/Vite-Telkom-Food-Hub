@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
@@ -25,11 +24,11 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/outlet/:slug" element={<OutletPage />} />
-        <Route path="/partner" element={<PartnerPage />} />
+        <Route path='/' element={<HomePage />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/register' element={<RegisterPage />} />
+        <Route path='/outlet/:slug' element={<OutletPage />} />
+        <Route path='/partner' element={<PartnerPage />} />
       </Routes>
     </HashRouter>
   );
